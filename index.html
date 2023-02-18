@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Media Search</title>
+    <style>
+      .file-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+      .file-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+      .view-button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      .download-button {
+        background-color: #008CBA;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Media Search</h1>
+    <input type="text" id="search-bar" placeholder="Search...">
+    <div id="search-results"></div>
+
+    <script>
+      const search = document.querySelector('#search-bar');
+      const results = document.querySelector('#search-results');
+
+      search.addEventListener('keyup', async () => {
+        const query = search.value;
+
+        // Replace <username> and <repository-name> with your own GitHub username and repository name
+        const url = `https://api.github.com/search/code?q=${query}+in:file+repo:Fresh-Teacher/secondary`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        results.innerHTML = '';
+        const filteredItems = data.items.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+        filteredItems.forEach((item) => {
+          const url = item.html_url;
+          const name = item.name;
+          const fileContainer = document.createElement('div');
+          fileContainer.classList.add('file-container');
+          const fileName = document.createElement('div');
+          fileName.classList.add('file-name');
+          fileName.textContent = name;
+          const viewButton = document.createElement('a');
+          viewButton.href = url;
+          viewButton.classList.add('view-button');
+          viewButton.textContent = 'View Document';
+          const downloadButton = document.createElement('a');
+          downloadButton.href = `${url}?raw=true`;
+          downloadButton.classList.add('download-button');
+          downloadButton.textContent = 'Download Document';
+          fileContainer.appendChild(fileName);
+          fileContainer.appendChild(viewButton);
+          fileContainer.appendChild(downloadButton);
+          results.appendChild(fileContainer);
+        });
+      });
+    </script>
+  </body>
+</html>
